@@ -18,22 +18,33 @@ cp .env_dist .env
 
 2. Update values as needed (e.g., database name, user or password).
 
-## First Commit: Dockerization
+## Quickstart
 
-This repo demonstrates a reproducible Docker setup with:
-
-- Django
-- Postgres
-- pgAdmin
-- Docker Compose
-- Environment variables
-
-Later commits will add the Django project and features.
-
-### Test commit
-
-Execute the following commands and make sure that no error is generated:
+1. Build and start the image:
 ```
-docker build -t expense-manager .
-docker run -p 8000:8000 expense-manager
+docker-compose up --build
 ```
+
+2. Visit `http://localhost:8000/` to confirm that Django welcome page loads successfully.
+3. Visit `http://localhost:5050/` to confirm that pgAdmin login page loads successfully.
+3. Verify PostgreSQL is running:
+    - Open a shell inside the expense_manager_postgres container
+      ```bash
+      docker exec -it expense_manager_postgres bash
+      ```
+      or use the Docker Desktop.
+
+    - Connect to the database:
+      ```bash
+      psql -U admin -d expense_manager
+      ```
+
+    - Once inside `psql`, list databases:
+      ```sql
+      \l
+      ```
+      
+      or the tables:
+      ```sql
+      \dt
+      ```

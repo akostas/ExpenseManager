@@ -20,5 +20,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Placeholder unti project is set up
-CMD ["bash"]
+# Copy entrypoint and make it executable
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Run Django server
+CMD ["python", "expense_manager/manage.py", "runserver", "0.0.0.0:8000"]
