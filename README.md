@@ -48,3 +48,18 @@ docker-compose up --build
       ```sql
       \dt
       ```
+
+## Test Expense Model
+
+- Visit pgAdmin site: `http://localhost:5050/`
+- Login using the credentials in `.env` file (`PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD`).
+- Add a new server.
+- In `General` tab provide a `Name`, e.g., Expenses.
+- In `Connection` tab enter the host name (`postgres`), the port (`5432`), the username and password. All this information has been provided in `.env` file.
+- Head to `Servers/Expenses/Databases/expense_manager` and open the Query Tool (`Alt + Shift + Q`).
+- Execute the following: 
+```
+INSERT INTO expenses_expense (title, amount, date, description)
+VALUES ('Burger', 21.37, '2025-09-07', 'Night out');
+```
+- Right click on `Schemas/public/Tables/expenses_expense` and select `View -> All Rows`. You should see the input provided above.
