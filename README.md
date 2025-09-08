@@ -72,7 +72,7 @@ VALUES ('Burger', 21.37, '2025-09-07', 'Night out');
 
 ## Test API Endpoints
 
-### POST /expenses
+### POST /expenses/
 
 #### Valid input
 
@@ -98,12 +98,12 @@ curl -i -X POST http://localhost:8000/api/expenses/ \
 
 It should return a `400 Bad Request` with the following error message: `{"title":["This field is required."]}`
 
-#### Method Not Allowed `405`
+### GET /expenses/
 
-Send a GET API call instead of a POST one:
+Send a GET API call to retrieve all the Expense records:
 
 ```
 curl -i -X GET http://localhost:8000/api/expenses/
 ```
 
-It should return a `405 Method Not Allowed` with the following error message: `{"detail":"Method \"GET\" not allowed."}`
+It should return a `200 OK` with a list of JSON files, of all the Expense records.
