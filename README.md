@@ -154,11 +154,11 @@ curl -i -X DELETE http://localhost:8000/api/expenses/3/
 
 It should return a `204 No Content`.
 
-## Filtering, Searching, Ordering
+## Filtering, Searching, Ordering, Pagination
 
 ### Filtering
 
-#### Filter by exact title (case sensitive)
+#### Filter by exact title (case-sensitive)
 
 ```
 curl -i http://localhost:8000/api/expenses/?title=<exact word>
@@ -205,4 +205,20 @@ curl -i http://localhost:8000/api/expenses/?ordering=-amount
 
 ```
 curl -i http://localhost:8000/api/expenses/?search=dinner&ordering=-amount
+```
+
+### Pagination
+
+Pagination has been implemented, so that only 10 items are returned per page. If the GET call is sent like this (
+default):
+
+```
+curl -i http://localhost:8000/api/expenses/
+```
+
+then only the first 10 items will be returned, and the response will inform for the total amount that exist. In order to
+view the next pages, a GET call similar to the following shall be made:
+
+```
+curl -i http://localhost:8000/api/expenses/?page=2
 ```
