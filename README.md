@@ -107,3 +107,15 @@ curl -i -X GET http://localhost:8000/api/expenses/
 ```
 
 It should return a `200 OK` with a list of JSON files, of all the Expense records.
+
+### GET /expenses/<id> - retrieve a specific Expense
+
+Send a GET API call to retrieve a specific Expense record, based on its ID.
+
+```
+curl -i -X GET http://localhost:8000/api/expenses/2/
+```
+
+It should return a `200 OK` with the specific Expense (in case it already exists).
+If an Expense record with the specific ID doesn't exist then it should return `404 Not Found` with the following
+message: `{"detail":"No Expense matches the given query."}`.
