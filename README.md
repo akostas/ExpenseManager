@@ -1,4 +1,5 @@
 # ExpenseManager
+
 This is an expense manager created with Django
 
 ## Prerequisites
@@ -21,6 +22,7 @@ cp .env_dist .env
 ## Quickstart
 
 1. Build and start the image:
+
 ```
 docker-compose up --build
 ```
@@ -43,23 +45,65 @@ docker-compose up --build
       ```sql
       \l
       ```
-      
+
       or the tables:
       ```sql
       \dt
       ```
 
-## Test Expense Model
+## Test Expense Model using pgAdmin
 
 - Visit pgAdmin site: `http://localhost:5050/`
 - Login using the credentials in `.env` file (`PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD`).
 - Add a new server.
 - In `General` tab provide a `Name`, e.g., Expenses.
-- In `Connection` tab enter the host name (`postgres`), the port (`5432`), the username and password. All this information has been provided in `.env` file.
+- In `Connection` tab enter the host name (`postgres`), the port (`5432`), the username and password. All this
+  information has been provided in `.env` file.
 - Head to `Servers/Expenses/Databases/expense_manager` and open the Query Tool (`Alt + Shift + Q`).
-- Execute the following: 
+- Execute the following:
+
 ```
 INSERT INTO expenses_expense (title, amount, date, description)
 VALUES ('Burger', 21.37, '2025-09-07', 'Night out');
 ```
-- Right click on `Schemas/public/Tables/expenses_expense` and select `View -> All Rows`. You should see the input provided above.
+
+- Right click on `Schemas/public/Tables/expenses_expense` and select `View -> All Rows`. You should see the input
+  provided above.
+
+## Test API Endpoints
+
+### POST /expenses
+
+#### Valid input
+
+Send a POST API call to test the creation of an expense:
+
+```
+curl -i -X POST http://localhost:8000/api/expenses/ \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Dinner", "amount": 45.20, "date": "2025-09-07", "description": "Sushi"}'
+```
+
+It should return `201` status code, along with the provided json.
+
+#### Bad Request `400`
+
+Send a POST API call with missing items in the input, e.g., title:
+
+```
+curl -i -X POST http://localhost:8000/api/expenses/ \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 45.20, "date": "2025-09-07"}'
+```
+
+It should return a `400 Bad Request` with the following error message: `{"title":["This field is required."]}`
+
+#### Method Not Allowed `405`
+
+Send a GET API call instead of a POST one:
+
+```
+curl -i -X GET http://localhost:8000/api/expenses/
+```
+
+It should return a `405 Method Not Allowed` with the following error message: `{"detail":"Method \"GET\" not allowed."}`
