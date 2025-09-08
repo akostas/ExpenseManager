@@ -28,18 +28,21 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
     serializer_class = ExpenseSerializer
 
 
-class ExpenseDetailView(generics.RetrieveAPIView):
+class ExpenseRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     """
-    API endpoint that retrieves a single Expense by its ID.
-
-    Methods:
-        GET: Returns the details of the specified Expense.
+    API endpoint that allows to:
+      - GET: retrieve a single Expense record by its ID
+      - PUT: update all fields of an Expense record by its ID
+      - PATCH: update partial fields of an Expense record by its ID
+      - DELETE: delete an Expense record by its ID
 
     URL parameters:
         id (int): The primary key of the expense to retrieve.
 
     Responses:
-        200 OK: Returned when the expense exists.
+        200 OK: For successful GET, PUT, PATCH
+        204 No Content: For successful DELETE
+        400 Bad Request: For invalid input
         404 Not Found: Returned if no expense with the given ID exists.
     """
     queryset = Expense.objects.all()

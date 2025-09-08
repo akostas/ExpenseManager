@@ -119,3 +119,37 @@ curl -i -X GET http://localhost:8000/api/expenses/2/
 It should return a `200 OK` with the specific Expense (in case it already exists).
 If an Expense record with the specific ID doesn't exist then it should return `404 Not Found` with the following
 message: `{"detail":"No Expense matches the given query."}`.
+
+### PUT /expenses/<id> - update a specific Expense (full update)
+
+Send a PUT API call to modify an Expense record, by providing all the required arguments.
+
+```
+curl -i -X PUT http://localhost:8000/api/expenses/3/ \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Updated Book","amount":20.00,"date":"2025-09-07","description":"Updated"}'
+```
+
+It should return a `200 OK` with the updated Expense.
+
+### PATCH /expenses/<id> - update a specific Expense (partial update)
+
+Send a PATCH API call to modify an Expense record, by providing some of the arguments.
+
+```
+curl -i -X PATCH http://localhost:8000/api/expenses/3/ \
+  -H "Content-Type: application/json" \
+  -d '{"amount":25.00}'
+```
+
+It should return a `200 OK` with the updated Expense.
+
+### DELETE /expenses/<id> - delete a specific Expense
+
+Send a DELETE API call to delete an Expense record.
+
+```
+curl -i -X DELETE http://localhost:8000/api/expenses/3/
+```
+
+It should return a `204 No Content`.
