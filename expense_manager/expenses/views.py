@@ -35,6 +35,14 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
     ordering_fields = ['id', 'date', 'amount']
     ordering = ['id']
 
+    def get_queryset(self):
+        # Only return expenses of the logged-in user
+        return Expense.objects.filter(user=self.request.user).order_by('-date')
+
+    def perform_create(self, serializer):
+        # Automatically assign the logged-in user to new expenses
+        serializer.save(user=self.request.user)
+
 
 class ExpenseRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -56,3 +64,6 @@ class ExpenseRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     lookup_field = 'id'
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user)

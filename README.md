@@ -51,24 +51,23 @@ docker-compose up --build
       \dt
       ```
 
-## Test Expense Model using pgAdmin
+## Create users
 
-- Visit pgAdmin site: `http://localhost:5050/`
-- Login using the credentials in `.env` file (`PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD`).
-- Add a new server.
-- In `General` tab provide a `Name`, e.g., Expenses.
-- In `Connection` tab enter the host name (`postgres`), the port (`5432`), the username and password. All this
-  information has been provided in `.env` file.
-- Head to `Servers/Expenses/Databases/expense_manager` and open the Query Tool (`Alt + Shift + Q`).
-- Execute the following:
+1. Enter `expense_manager_django` container:
 
 ```
-INSERT INTO expenses_expense (title, amount, date, description)
-VALUES ('Burger', 21.37, '2025-09-07', 'Night out');
+docker exec -ti expense_manager_django sh
 ```
 
-- Right click on `Schemas/public/Tables/expenses_expense` and select `View -> All Rows`. You should see the input
-  provided above.
+2. Use the provided script to create a user:
+
+```
+python scripts/create_user.py --username testuser --email test@test.com --password testpass
+```
+
+Expected output: `User 'testuser' created successfully.`
+
+**NOTE**: A user is required to perform the following API calls.
 
 ## Test API Endpoints
 
@@ -79,7 +78,7 @@ VALUES ('Burger', 21.37, '2025-09-07', 'Night out');
 Send a POST API call to test the creation of an expense:
 
 ```
-curl -i -X POST http://localhost:8000/api/expenses/ \
+curl -i -X POST -u testuser:testpass http://localhost:8000/api/expenses/ \
   -H "Content-Type: application/json" \
   -d '{"title": "Dinner", "amount": 45.20, "date": "2025-09-07", "description": "Sushi"}'
 ```
@@ -91,7 +90,7 @@ It should return `201` status code, along with the provided json.
 Send a POST API call with missing items in the input, e.g., title:
 
 ```
-curl -i -X POST http://localhost:8000/api/expenses/ \
+curl -i -X POST -u testuser:testpass http://localhost:8000/api/expenses/ \
   -H "Content-Type: application/json" \
   -d '{"amount": 45.20, "date": "2025-09-07"}'
 ```
@@ -103,7 +102,7 @@ It should return a `400 Bad Request` with the following error message: `{"title"
 Send a GET API call to retrieve all the Expense records:
 
 ```
-curl -i -X GET http://localhost:8000/api/expenses/
+curl -i -X GET -u testuser:testpass http://localhost:8000/api/expenses/
 ```
 
 It should return a `200 OK` with a list of JSON files, of all the Expense records.
@@ -113,7 +112,7 @@ It should return a `200 OK` with a list of JSON files, of all the Expense record
 Send a GET API call to retrieve a specific Expense record, based on its ID.
 
 ```
-curl -i -X GET http://localhost:8000/api/expenses/2/
+curl -i -X GET -u testuser:testpass http://localhost:8000/api/expenses/2/
 ```
 
 It should return a `200 OK` with the specific Expense (in case it already exists).
@@ -125,7 +124,7 @@ message: `{"detail":"No Expense matches the given query."}`.
 Send a PUT API call to modify an Expense record, by providing all the required arguments.
 
 ```
-curl -i -X PUT http://localhost:8000/api/expenses/3/ \
+curl -i -X PUT -u testuser:testpass http://localhost:8000/api/expenses/3/ \
   -H "Content-Type: application/json" \
   -d '{"title":"Updated Book","amount":20.00,"date":"2025-09-07","description":"Updated"}'
 ```
@@ -137,7 +136,7 @@ It should return a `200 OK` with the updated Expense.
 Send a PATCH API call to modify an Expense record, by providing some of the arguments.
 
 ```
-curl -i -X PATCH http://localhost:8000/api/expenses/3/ \
+curl -i -X PATCH -u testuser:testpass http://localhost:8000/api/expenses/3/ \
   -H "Content-Type: application/json" \
   -d '{"amount":25.00}'
 ```
@@ -149,7 +148,7 @@ It should return a `200 OK` with the updated Expense.
 Send a DELETE API call to delete an Expense record.
 
 ```
-curl -i -X DELETE http://localhost:8000/api/expenses/3/
+curl -i -X DELETE -u testuser:testpass http://localhost:8000/api/expenses/3/
 ```
 
 It should return a `204 No Content`.
@@ -161,19 +160,19 @@ It should return a `204 No Content`.
 #### Filter by exact title (case-sensitive)
 
 ```
-curl -i http://localhost:8000/api/expenses/?title=<exact word>
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?title=<exact word>
 ```
 
 #### Filter by exact date
 
 ```
-curl -i http://localhost:8000/api/expenses/?date=2025-09-07
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?date=2025-09-07
 ```
 
 #### Filter by exact amount
 
 ```
-curl -i http://localhost:8000/api/expenses/?amount=23.17
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?amount=23.17
 ```
 
 ### Searching (case in-sensitive)
@@ -181,7 +180,7 @@ curl -i http://localhost:8000/api/expenses/?amount=23.17
 It is possible to search with partial input in the title or description fields:
 
 ```
-curl -i http://localhost:8000/api/expenses/?search=dinner
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?search=dinner
 ```
 
 ### Ordering
@@ -192,19 +191,19 @@ ascending order based on their id.
 #### Example 1: Ascending order based on date
 
 ```
-curl -i http://localhost:8000/api/expenses/?ordering=date
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?ordering=date
 ```
 
 #### Example 2: Descending order based on the amount
 
 ```
-curl -i http://localhost:8000/api/expenses/?ordering=-amount
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?ordering=-amount
 ```
 
 **NOTE**: All of the above may be combined, for example:
 
 ```
-curl -i http://localhost:8000/api/expenses/?search=dinner&ordering=-amount
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?search=dinner&ordering=-amount
 ```
 
 ### Pagination
@@ -213,12 +212,12 @@ Pagination has been implemented, so that only 10 items are returned per page. If
 default):
 
 ```
-curl -i http://localhost:8000/api/expenses/
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/
 ```
 
 then only the first 10 items will be returned, and the response will inform for the total amount that exist. In order to
 view the next pages, a GET call similar to the following shall be made:
 
 ```
-curl -i http://localhost:8000/api/expenses/?page=2
+curl -i -u testuser:testpass http://localhost:8000/api/expenses/?page=2
 ```
