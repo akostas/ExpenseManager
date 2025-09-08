@@ -153,3 +153,56 @@ curl -i -X DELETE http://localhost:8000/api/expenses/3/
 ```
 
 It should return a `204 No Content`.
+
+## Filtering, Searching, Ordering
+
+### Filtering
+
+#### Filter by exact title (case sensitive)
+
+```
+curl -i http://localhost:8000/api/expenses/?title=<exact word>
+```
+
+#### Filter by exact date
+
+```
+curl -i http://localhost:8000/api/expenses/?date=2025-09-07
+```
+
+#### Filter by exact amount
+
+```
+curl -i http://localhost:8000/api/expenses/?amount=23.17
+```
+
+### Searching (case in-sensitive)
+
+It is possible to search with partial input in the title or description fields:
+
+```
+curl -i http://localhost:8000/api/expenses/?search=dinner
+```
+
+### Ordering
+
+The results may be returned ordered among the following fields: id, date, amount. By default, they are returned in
+ascending order based on their id.
+
+#### Example 1: Ascending order based on date
+
+```
+curl -i http://localhost:8000/api/expenses/?ordering=date
+```
+
+#### Example 2: Descending order based on the amount
+
+```
+curl -i http://localhost:8000/api/expenses/?ordering=-amount
+```
+
+**NOTE**: All of the above may be combined, for example:
+
+```
+curl -i http://localhost:8000/api/expenses/?search=dinner&ordering=-amount
+```

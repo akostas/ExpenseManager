@@ -1,4 +1,5 @@
-from rest_framework import generics
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, filters
 from .models import Expense
 from .serializers import ExpenseSerializer
 
@@ -7,6 +8,7 @@ from .serializers import ExpenseSerializer
 class ExpenseListCreateView(generics.ListCreateAPIView):
     """
     API endpoint that creates a new Expense record or lists all existing records from the database.
+    Supports filtering, searching and ordering.
 
     Methods:
         GET: Returns a list of all Expense records.
@@ -26,6 +28,12 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
     """
     queryset = Expense.objects.all().order_by('id')
     serializer_class = ExpenseSerializer
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['date', 'title', 'amount']
+    search_fields = ['title', 'description']
+    ordering_fields = ['id', 'date', 'amount']
+    ordering = ['id']
 
 
 class ExpenseRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
